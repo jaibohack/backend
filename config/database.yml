@@ -7,10 +7,10 @@ development:
   adapter: postgresql
   encoding: unicode
   host: localhost
-  database: ronda_dev
+  database: jaibo_dev
   pool: 20
-  username: ronda
-  password: ronda
+  username: jaibo
+  password: jaibo
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -19,25 +19,25 @@ test:
   adapter: postgresql
   encoding: unicode
   host: localhost
-  database: ronda_test
+  database: jaibo_test
   pool: 5
-  username: ronda
-  password: ronda
+  username: jaibo
+  password: jaibo
 
 production:
   adapter: postgresql
   encoding: unicode
   host: localhost
-  database: ronda_prod
+  database: jaibo_prod
   pool: 10
-  username: ronda
-  password: ronda
+  username: jaibo
+  password: jaibo
 
 beta:
   adapter: postgresql
   encoding: unicode
   host: localhost
-  database: ronda_prod
+  database: jaibo_prod
   pool: 10
-  username: ronda
-  password: ronda
+  username: jaibo
+  password: jaibo
