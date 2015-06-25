@@ -41,14 +41,12 @@ ActiveRecord::Schema.define(version: 20150623045341) do
 
   create_table "schools", force: :cascade do |t|
     t.string   "name"
-    t.string   "hash"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "skills", force: :cascade do |t|
     t.string   "name"
-    t.string   "hash"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
