@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150625021323) do
+ActiveRecord::Schema.define(version: 20150629035505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,16 @@ ActiveRecord::Schema.define(version: 20150625021323) do
   add_index "attendees", ["ip_id"], name: "index_attendees_on_ip_id", using: :btree
   add_index "attendees", ["school_id"], name: "index_attendees_on_school_id", using: :btree
 
+  create_table "events", force: :cascade do |t|
+    t.string   "name",                 null: false
+    t.string   "venue",                null: false
+    t.date     "begins_on",            null: false
+    t.date     "registration_ends_on", null: false
+    t.integer  "attendees_limit",      null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
   create_table "ips", force: :cascade do |t|
     t.string   "address"
     t.datetime "created_at", null: false
@@ -59,8 +69,20 @@ ActiveRecord::Schema.define(version: 20150625021323) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tickets", force: :cascade do |t|
+    t.integer  "attendee_id", null: false
+    t.integer  "event_id",    null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "tickets", ["attendee_id"], name: "index_tickets_on_attendee_id", using: :btree
+  add_index "tickets", ["event_id"], name: "index_tickets_on_event_id", using: :btree
+
   add_foreign_key "attendee_skills", "attendees"
   add_foreign_key "attendee_skills", "skills"
   add_foreign_key "attendees", "ips"
   add_foreign_key "attendees", "schools"
+  add_foreign_key "tickets", "attendees"
+  add_foreign_key "tickets", "events"
 end
