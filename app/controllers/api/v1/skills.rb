@@ -8,7 +8,7 @@ module API
         format :json
 
         get '' do
-          Skill.where("name LIKE ?", "#{params[:name]}%").select(:name) if params[:name]
+          Skill.where("name LIKE ?", "#{params[:name].downcase}%").select(:name) if params[:name]
         end
       end
     end
