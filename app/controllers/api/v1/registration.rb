@@ -42,7 +42,7 @@ module API
             main.each do|m|
               a[m[0]]= m[1]
             end
-            a.school = School.find_or_create_by(user.school.to_hash)
+            a.school = School.find_or_create_by(name: user.school.name.downcase)
           end
 
           event = Event.find_by!(declared_params.event.to_hash)
@@ -51,7 +51,7 @@ module API
             error! "Already registered", 403
           else
             user.skills.each do |skill|
-              new_skill = Skill.find_or_create_by(skill.to_hash)
+              new_skill = Skill.find_or_create_by(name: skill.name.downcase)
               AttendeeSkill.create(skill: new_skill, attendee: attendee) unless attendee.skills.where(name: new_skill.name)
             end
             Ticket.create(attendee: attendee, event: event)
