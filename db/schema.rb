@@ -17,8 +17,8 @@ ActiveRecord::Schema.define(version: 20150629035505) do
   enable_extension "plpgsql"
 
   create_table "attendee_skills", id: false, force: :cascade do |t|
-    t.integer  "attendee_id"
-    t.integer  "skill_id"
+    t.integer  "attendee_id", null: false
+    t.integer  "skill_id",    null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
@@ -27,18 +27,17 @@ ActiveRecord::Schema.define(version: 20150629035505) do
   add_index "attendee_skills", ["skill_id"], name: "index_attendee_skills_on_skill_id", using: :btree
 
   create_table "attendees", force: :cascade do |t|
-    t.string   "full_name"
-    t.string   "email"
-    t.integer  "age"
+    t.string   "full_name",  null: false
+    t.string   "email",      null: false
+    t.integer  "age",        null: false
     t.string   "github"
     t.string   "linkedin"
+    t.integer  "school_id",  null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "school_id"
-    t.integer  "ip_id"
   end
 
-  add_index "attendees", ["ip_id"], name: "index_attendees_on_ip_id", using: :btree
+  add_index "attendees", ["email"], name: "index_attendees_on_email", using: :btree
   add_index "attendees", ["school_id"], name: "index_attendees_on_school_id", using: :btree
 
   create_table "events", force: :cascade do |t|
@@ -51,23 +50,21 @@ ActiveRecord::Schema.define(version: 20150629035505) do
     t.datetime "updated_at",           null: false
   end
 
-  create_table "ips", force: :cascade do |t|
-    t.string   "address"
+  create_table "schools", force: :cascade do |t|
+    t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "schools", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+  add_index "schools", ["name"], name: "index_schools_on_name", using: :btree
 
   create_table "skills", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "skills", ["name"], name: "index_skills_on_name", using: :btree
 
   create_table "tickets", force: :cascade do |t|
     t.integer  "attendee_id", null: false
@@ -81,7 +78,6 @@ ActiveRecord::Schema.define(version: 20150629035505) do
 
   add_foreign_key "attendee_skills", "attendees"
   add_foreign_key "attendee_skills", "skills"
-  add_foreign_key "attendees", "ips"
   add_foreign_key "attendees", "schools"
   add_foreign_key "tickets", "attendees"
   add_foreign_key "tickets", "events"

@@ -5,27 +5,56 @@ module API
 
       resource :registration do
         desc "Attendees registration"
-        post '' do
-          params do
-            requires :user, :type => Hash do
-              requires :provider, type: String, desc: 'Authentication Provider'
-              requires :uid, type: String, desc: 'Provider user ID'
-              requires :info, :type => Hash do
-                requires :name, type: String, desc: "User's name and lastname"
-                requires :email, type: String, desc: "User's facebook email"
-                requires :image, type: String, desc: 'Profile picture url'
-              end
-              requires :extra, :type => Hash do
-                requires :raw_info, :type => Hash do
-                  requires :birthday, type: String, desc: 'Birthday string (MM/DD/YYYY)'
-                  requires :gender, type: String, desc: 'Male or female?'
-                end
-              end
-              requires :credentials, :type => Hash do
-                requires :token, type: String, desc: 'Facebook token'
-                requires :expires_at, type: Integer, desc: 'Facebook token expiration date'
-              end
+        format :json
+        params do
+          requires :user, :type => Hash do
+            requires :main, :type => Hash do
+              requires :full_name, type: String, desc: 'Attendee email'
+              requires :email, type: String, desc: 'A valid email'
+              optional :github, type: String, desc: 'Github username'
+              optional :linkedin, type: String, desc: 'Linkedin username'
+              requires :age, type: Integer, desc: 'Attendee age'
             end
+
+            requires :school, :type => Hash do
+              requires :name, type: String, desc: "Where the attendee studies"
+            end
+
+            requires :skills, type: Array do
+              requires :name
+            end
+            
+            requires :skills, type: Array, desc: "List of skills that the attendee has"
+          end
+
+          requires :event, :type => Hash do
+            requires :name, type: String, desc: "Event name!"
+          end
+        end
+
+        post '' do
+          
+          declared_params = declared(params, include_missing: false)
+          user = declared_params.user
+          main = user.main
+
+          attendee = Attendee.where(email: main.email).first_or_create do |a|
+            main.each do|m|
+              a[m[0]]= m[1]
+            end
+            a.school = School.find_or_create_by(user.school.to_hash)
+          end
+
+          event = Event.find_by!(declared_params.event.to_hash)
+
+          if Ticket.where(attendee: attendee, event_id: event).first
+            error! "Already registered", 403
+          else
+            user.skills.each do |skill|
+              new_skill = Skill.find_or_create_by(skill.to_hash)
+              AttendeeSkill.create(skill: new_skill, attendee: attendee) unless attendee.skills.where(name: new_skill.name)
+            end
+            Ticket.create(attendee: attendee, event: event)
           end
         end
       end

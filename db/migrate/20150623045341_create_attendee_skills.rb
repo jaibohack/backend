@@ -1,8 +1,8 @@
 class CreateAttendeeSkills < ActiveRecord::Migration
   def change
     create_table :attendee_skills, :id => false do |t|
-      t.references :attendee, index: true
-      t.references :skill, index: true
+      t.references :attendee, index: true, null: false
+      t.references :skill, index: true, null: false
 
       t.timestamps null: false
     end
