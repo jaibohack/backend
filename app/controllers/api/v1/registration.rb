@@ -52,7 +52,7 @@ module API
           else
             user.skills.each do |skill|
               new_skill = Skill.find_or_create_by(name: skill.name.downcase)
-              AttendeeSkill.create(skill: new_skill, attendee: attendee) unless attendee.skills.where(name: new_skill.name)
+              AttendeeSkill.create(skill: new_skill, attendee: attendee) unless attendee.skills.where(name: new_skill.name).first
             end
             Ticket.create(attendee: attendee, event: event)
           end
