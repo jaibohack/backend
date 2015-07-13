@@ -13,7 +13,8 @@ module API
 
         get '' do
           clazz = params.resource.classify.constantize
-          clazz.where("name LIKE ?", "#{params.q.downcase}%").select(:name)
+          results = clazz.where("name LIKE ?", "#{params.q.downcase}%").select(:name)
+          results.map{|r|r.name}
         end
       end
     end
