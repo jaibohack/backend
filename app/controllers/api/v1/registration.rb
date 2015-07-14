@@ -7,7 +7,7 @@ module API
         desc "Attendees registration"
         format :json
         params do
-          requires :user, :type => Hash do
+          requires :attendee, :type => Hash do
             requires :main, :type => Hash do
               requires :full_name, type: String, desc: 'Attendee email'
               requires :email, type: String, desc: 'A valid email'
@@ -16,13 +16,7 @@ module API
               requires :age, type: Integer, desc: 'Attendee age'
             end
 
-            requires :school, :type => Hash do
-              requires :name, type: String, desc: "Where the attendee studies"
-            end
-
-            requires :skills, type: Array do
-              requires :name
-            end
+            requires :school, type: String
             
             requires :skills, type: Array, desc: "List of skills that the attendee has"
           end
@@ -35,14 +29,14 @@ module API
         post '' do
           
           declared_params = declared(params, include_missing: false)
-          user = declared_params.user
+          user = declared_params.attendee
           main = user.main
 
           attendee = Attendee.where(email: main.email).first_or_create do |a|
             main.each do|m|
               a[m[0]]= m[1]
             end
-            a.school = School.find_or_create_by(name: user.school.name.downcase)
+            a.school = School.find_or_create_by(name: user.school.downcase)
           end
 
           event = Event.find_by!(declared_params.event.to_hash)
@@ -51,7 +45,7 @@ module API
             error! "Already registered", 403
           else
             user.skills.each do |skill|
-              new_skill = Skill.find_or_create_by(name: skill.name.downcase)
+              new_skill = Skill.find_or_create_by(name: skill.downcase)
               AttendeeSkill.create(skill: new_skill, attendee: attendee) unless attendee.skills.where(name: new_skill.name).first
             end
             Ticket.create(attendee: attendee, event: event)
